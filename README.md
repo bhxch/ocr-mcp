@@ -135,3 +135,7 @@ Python 3.11–3.12。依赖：`mcp[cli]>=2.0`、`paddleocr>=3.0`、`paddlepaddle
     uv run ruff check src tests
 
 **沙箱说明**：默认套件的纯单元测试在沙箱内可跑。依赖 socket / paddle 的测试（`test_transport_unix`、`test_worker`、`test_lifecycle`、`-m slow` 集成测试）会创建 `AF_UNIX` socket 并加载真实模型，需**禁用沙箱**（否则 `Operation not permitted`）。
+
+## 许可证
+
+MIT，见 [LICENSE](LICENSE)。

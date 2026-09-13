@@ -3,6 +3,7 @@ name = "ocr-mcp"
 version = "0.1.0"
 description = "OCR MCP server sharing a single resident PaddleOCR backend across MCP clients"
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.11,<3.13"
 dependencies = [
     "mcp[cli]>=2.0",
