@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -14,6 +15,8 @@ from ocr_mcp.config import Settings
 
 # Re-exported for tests/imports.
 __all__ = ["BackendClient", "CallResult", "create_server", "handle_ocr_image"]
+
+log = logging.getLogger("ocr_mcp.server")
 
 
 @dataclass
@@ -76,7 +79,7 @@ class BackendClient:
             try:
                 await self.transport.close()
             except Exception:
-                pass
+                log.debug("transport.close() failed", exc_info=True)
             self.transport = None
 
 
@@ -144,7 +147,7 @@ async def handle_ocr_image(arguments: dict[str, Any]) -> CallResult:
     try:
         client = await _get_client()
         resp = await client.request("ocr", payload)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - boundary: any backend failure becomes a tool error
         return CallResult(
             isError=True, content=[TextContent(type="text", text=f"ERROR: DAEMON_UNAVAILABLE: {e}")]
         )

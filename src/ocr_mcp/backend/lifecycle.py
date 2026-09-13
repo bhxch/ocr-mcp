@@ -60,7 +60,7 @@ async def is_alive(settings: Settings, lock: dict) -> bool:
         line = await asyncio.wait_for(t.recv_line(), timeout=5.0)
         resp = protocol.decode_message(line)
         return bool(resp.get("ok"))
-    except Exception:
+    except Exception:  # noqa: BLE001 - any probe failure means the daemon is unusable
         return False
     finally:
         await t.close()

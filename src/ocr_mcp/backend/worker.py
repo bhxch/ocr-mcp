@@ -91,14 +91,14 @@ class DaemonWorker:
             try:
                 writer.close()
             except Exception:
-                pass
+                log.debug("writer.close() failed", exc_info=True)
             if self._clients == 0:
                 self._idle_event.set()  # wake loop to start idle timer
 
     async def _handle(self, line: bytes) -> dict:
         try:
             msg = protocol.decode_message(line)
-        except Exception as e:
+        except ValueError as e:
             return protocol.make_error("?", "BAD_REQUEST", f"invalid json: {e}")
         mid = msg.get("id", "?")
         if msg.get("token") != self.token:
@@ -146,6 +146,6 @@ class DaemonWorker:
             return protocol.make_error(mid, "IMAGE_UNREADABLE", str(e))
         except InferenceFailed as e:
             return protocol.make_error(mid, "INFERENCE_FAILED", str(e))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - boundary: engine errors become INFERENCE_FAILED
             return protocol.make_error(mid, "INFERENCE_FAILED", f"{type(e).__name__}: {e}")
         return protocol.make_success(mid, result.to_dict())
