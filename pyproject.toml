@@ -1,0 +1,43 @@
+[project]
+name = "ocr-mcp"
+version = "0.1.0"
+description = "OCR MCP server sharing a single resident PaddleOCR backend across MCP clients"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "mcp[cli]>=2.0",
+    "paddleocr>=3.0,<4.0",
+    "paddlepaddle>=3.0,<4.0",
+    "platformdirs>=4.0",
+]
+
+[project.scripts]
+ocr-mcp = "ocr_mcp.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ocr_mcp"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+# Skip the real-model e2e test by default; run it explicitly with `-m slow`.
+# A `-m slow` on the CLI overrides this (argparse keeps the last `-m`).
+addopts = ["-m", "not slow"]
+markers = [
+    "slow: end-to-end tests requiring the real PaddleOCR model",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
